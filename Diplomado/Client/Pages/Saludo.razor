@@ -1,0 +1,107 @@
+﻿@page "/saludo"
+<PageTitle>Saludo</PageTitle>
+<h1>Saludo</h1>
+<h2>@((MarkupString)Mensaje)</h2>
+
+
+<div class="mb-3">
+	<label for="exampleFormControlInput1" class="form-label">Escribe el nombre</label>
+	<input class="form-control" id="exampleFormControlInput1" placeholder="Nombre completo" @bind="Nombre">
+</div>
+<div class="mb-3">
+	<label for="edad" class="form-label">Escribe tu edad</label>
+	<input type="number" class="form-control" id="edad" @bind="Edad">
+</div>
+
+@if (Edad < 18)
+{
+	<div class="alert alert-danger" role="alert">
+		¡Eres menor de edad no puedes continuar!
+	</div>
+}
+
+<button class="btn btn-primary" @onclick="Saludar">Saludar</button>
+
+<h1>@Numerocorto</h1>
+<h1>@Numeroentero</h1>
+<h1>@Numerolargo</h1>
+
+@code {
+	[Parameter]
+	public string? Mensaje { get; set; } = "Hola";
+	private string? Nombre;
+	//Aqui es un comentario
+	private short Numerocorto = 10; //Esta variable se utiliza para leer la edad
+	private int Numeroentero;
+	private long Numerolargo = 100000000000000;
+	private short Edad;
+
+	/// <summary>
+	///
+	/// </summary>
+	///
+	private void Saludar()
+	{
+		//short i = 1;
+		//Mensaje = "<ul>";
+		////while (i <= Edad)
+		////{
+		////	Mensaje += $"<li>{i}</li>";
+		////	i++;
+		////}
+		//Mensaje = "";
+		//for (i = 1; i <= Edad; i++)
+		//{
+		//	Mensaje += $"<p>{i}</p>";
+		//}
+		//Mensaje += "</ul>";
+
+		//if (Edad >= 18)
+		//{
+		//	Mensaje = "Eres mayor de edad";
+		//}
+		//else
+		//{
+		//	Mensaje = "Eres menor de edad";
+		//}
+
+		//Mensaje = (Edad >= 18) ? "Eres mayor de edad" : "Eres menor de edad";
+
+		//if (Edad == 10)
+		//{
+		//	Mensaje = "A";
+		//}
+		//else if (Edad == 9)
+		//{
+		//	Mensaje = "B";
+		//}
+		//else if (Edad == 8)
+		//{
+		//	Mensaje = "C";
+		//}
+
+		//switch (Edad)
+		//{
+		//	case 10:
+		//		Mensaje = "A";
+		//		break;
+		//	case 9:
+		//		Mensaje = "B";
+		//		break;
+		//	case 8:
+		//		Mensaje = "C";
+		//		break;
+		//}
+
+
+
+
+		Mensaje = $"Hola {Nombre}, Edad {Edad.ToString()}";
+
+		//Numeroentero = Numeroentero + 1;
+		//Numeroentero += 1;
+
+		//Mensaje = (!(Numerocorto > Numerolargo)).ToString();
+	}
+
+}

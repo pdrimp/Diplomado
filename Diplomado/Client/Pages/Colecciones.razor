@@ -1,0 +1,116 @@
+﻿@page "/personas"
+@inject HttpClient _http
+
+<PageTitle>Personas</PageTitle>
+<h3>Personas</h3>
+
+<EditForm Model="Persona" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator />
+	<div class="mb-3">
+		<label for="nombre" class="form-label">Nombre</label>
+		<InputText class="form-control" id="nombre" @bind-Value="Persona.Nombre" />
+		<ValidationMessage For="@(()=>@Persona.Nombre)" />
+	</div>
+	<div class="mb-3">
+		<label for="correo" class="form-label">Correo</label>
+		<InputText class="form-control" id="correo" @bind-Value="Persona.Correo" />
+		<ValidationMessage For="@(()=>@Persona.Correo)" />
+	</div>
+	<div class="mb-3">
+		<label for="telefono" class="form-label">Teléfono</label>
+		<InputText class="form-control" id="telefono" @bind-Value="Persona.Telefono" />
+		<ValidationMessage For="@(()=>@Persona.Telefono)" />
+	</div>
+	<button class="btn btn-primary" type="submit">Guardar</button>
+	@if (modificar)
+	{
+		<button class="btn btn-danger" @onclick="Cancelar">Cancelar</button>
+	}
+</EditForm>
+
+
+@if (Personas.Count > 0)
+{
+	<table class="table table-striped mt-3">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Correo</th>
+				<th>Teléfono</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (Persona persona in Personas)
+			{
+				<tr>
+					<td>@persona.Nombre</td>
+					<td>@persona.Correo</td>
+					<td>@persona.Telefono</td>
+					<td>
+						<button class="btn" @onclick="()=>Modificar(persona)" title="Editar"><span class="oi oi-pencil" /></button>
+						<button class="btn ms-3" @onclick="()=>Eliminar(persona.Id)" title="Eliminar"><span class="oi oi-trash" /></button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@if (cargando)
+{
+	<div class="spinner-border" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+}
+
+@code {
+	private Persona Persona = new Persona();
+	private List<Persona>? Personas = new();
+	private bool modificar = false;
+	private bool cargando = true;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Mostrar();
+	}
+
+	private async Task Mostrar()
+	{
+		Personas = await _http.GetFromJsonAsync<List<Persona>>("api/personas");
+		cargando = false;
+		StateHasChanged();
+	}
+
+	private async void Guardar()
+	{
+		if (modificar)
+		{
+			await _http.PutAsJsonAsync($"api/personas/{Persona.Id}", Persona);
+			modificar = false;
+		}
+		else
+		{
+			var persona = await _http.PostAsJsonAsync<Persona>("api/personas", Persona);
+		}
+		Persona = new();
+		await Mostrar();
+	}
+
+	private async void Eliminar(int id)
+	{
+		await _http.DeleteAsync($"api/personas/{id}");
+		await Mostrar();
+	}
+
+	private void Modificar(Persona lapersona)
+	{
+		Persona = lapersona;
+		modificar = true;
+	}
+
+	private void Cancelar()
+	{
+		modificar = false;
+	}
+}
